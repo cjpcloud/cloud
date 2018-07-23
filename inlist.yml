@@ -1,0 +1,31 @@
+---
+-
+  environment:
+    AWS_ACCESS_KEY_ID:  AKIAJEF2EY6WCPH3UF6Q
+    AWS_SECRET_ACCESS_KEY: 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
+  hosts: localhost
+  vars:
+    fmt: "%Y-%m-%dT%H:%M:%S"
+    region: us-east-1
+  name: "Instances Details"
+  tasks:
+    -
+      ec2_instance_facts:
+        region: "{{ region }}"
+      register: ec2_instances
+
+    -
+      name: "set instance_id loop"
+      set_fact:
+        instance_list: []
+
+
+    - set_fact:
+         instance_list: "{{ instance_list +[ item.instance_id]}}"
+      name: "Instances which are greater than 30 days"
+      when:  (ansible_date_time.iso8601[:19] | to_datetime(fmt) - item.launch_time[:19] | to_datetime(fmt)).days >= 0
+      with_flattened:
+        - "{{ ec2_instances.instances }}"
+
+    - debug: msg="{{ instance_list}}"
+

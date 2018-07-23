@@ -1,0 +1,8 @@
+---
+- hosts: localhost
+  connection: local
+  environment:
+     accesskey: AKIAJEF2EY6WCPH3UF6Q
+     secretkey: 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
+  roles:
+    - role: StartInstance
